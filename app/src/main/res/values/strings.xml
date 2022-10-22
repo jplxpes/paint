@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Paint</string>
+    <string name="action_setting">setting</string>
+    <string name="developerMsg">Made by João Pedro Lopes</string>
+    <string name="saveMessage">Save</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="clearMsg">Clear</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+</resources>
