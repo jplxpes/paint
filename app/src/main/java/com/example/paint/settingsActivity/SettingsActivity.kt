@@ -1,17 +1,25 @@
 package com.example.paint.settingsActivity
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.widget.SeekBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.paint.AlignEventListener
 import com.example.paint.COLOR_TAG
 import com.example.paint.ColorDTO
 import com.example.paint.mainActivity.MainActivity
 import com.example.paint.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var sensorManager: SensorManager
+    private var alignListener: SensorEventListener? = null
 
     private val viewModel: SettingsViewModel by viewModels()
 
@@ -22,6 +30,22 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+        alignListener = AlignEventListener(binding)
+
+        binding.logger.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                sensorManager.registerListener(
+                    alignListener,
+                    sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                    SensorManager.SENSOR_DELAY_UI
+                )
+            } else {
+                sensorManager.unregisterListener(alignListener)
+            }
+        }
 
         startSeeKBar(binding.b, "blue")
         startSeeKBar(binding.g, "green")
@@ -40,6 +64,13 @@ class SettingsActivity : AppCompatActivity() {
             binding.b.progress = it.blue
         }
 
+        if (binding.logger.isChecked) {
+            sensorManager.registerListener(
+                alignListener,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_UI
+            )
+        }
         binding.save.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra(
@@ -60,10 +91,17 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
     }
 
     override fun onResume() {
         super.onResume()
+        if (alignListener != null && binding.logger.isChecked)
+            sensorManager.registerListener(
+                alignListener,
+                sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_UI
+            )
         val rgb: Int = intent.getIntExtra(COLOR_TAG, Color.BLACK)
         viewModel.currentColor.postValue(
             ColorDTO(
@@ -103,4 +141,9 @@ class SettingsActivity : AppCompatActivity() {
         })
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (alignListener != null && binding.logger.isChecked)
+            sensorManager.unregisterListener(alignListener)
+    }
 }

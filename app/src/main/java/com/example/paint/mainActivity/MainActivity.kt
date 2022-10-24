@@ -2,9 +2,7 @@ package com.example.paint.mainActivity
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.hardware.Sensor
-import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
@@ -13,25 +11,17 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.MutableLiveData
-import com.example.paint.COLOR_TAG
-import com.example.paint.R
-import com.example.paint.blackColor
+import com.example.paint.*
 import com.example.paint.databinding.ActivityMainBinding
-import com.example.paint.defaultColor
 import com.example.paint.settingsActivity.SettingsActivity
-import com.example.paint.settingsActivity.SettingsViewModel
-import java.lang.Math.sqrt
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
 
-    private var sensorManager: SensorManager? = null
-    private var acceleration = 0f
-    private var currentAcceleration = 0f
-    private var lastAcceleration = 0f
+    private lateinit var sensorManager: SensorManager
+
+    private var lightListener: SensorEventListener? = null
+    private var accelerationListener: SensorEventListener? = null
 
     private val viewModel: MainActivityViewModel by viewModels()
 
@@ -46,52 +36,38 @@ class MainActivity : AppCompatActivity() {
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-        Objects.requireNonNull(sensorManager)!!.registerListener(sensorListener, sensorManager!!
-            .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
-
-        acceleration = 10f
-        currentAcceleration = SensorManager.GRAVITY_EARTH
-        lastAcceleration = SensorManager.GRAVITY_EARTH
+        lightListener = LightEventListener(viewModel)
+        accelerationListener = AccelerometerEventListener(viewModel)
 
         viewModel.currentColor.observe(this) {
             binding.root.setBackgroundColor(it)
         }
     }
 
-    private val sensorListener: SensorEventListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent) {
-
-            // Fetching x,y,z values
-            val x = event.values[0]
-            val y = event.values[1]
-            val z = event.values[2]
-            lastAcceleration = currentAcceleration
-
-            // Getting current accelerations
-            // with the help of fetched x,y,z values
-            currentAcceleration = kotlin.math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
-            val delta: Float = currentAcceleration - lastAcceleration
-            acceleration = acceleration * 0.9f + delta
-
-            if (acceleration > 12) {
-                viewModel.removedHistory.postValue(ArrayList())
-                viewModel.drawingHistory.postValue(ArrayList())
-            }
-        }
-        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
-    }
 
     override fun onResume() {
         super.onResume()
-        sensorManager?.registerListener(sensorListener, sensorManager!!.getDefaultSensor(
-            Sensor .TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL
-        )
+        registerListeners()
         val request = intent.getIntExtra(COLOR_TAG, defaultColor)
         viewModel.currentColor.postValue(request)
     }
 
+    private fun registerListeners() {
+        sensorManager.registerListener(
+            lightListener,
+            sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+        sensorManager.registerListener(
+            accelerationListener,
+            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
+
     override fun onPause() {
-        sensorManager!!.unregisterListener(sensorListener)
+        sensorManager.unregisterListener(lightListener)
+        sensorManager.unregisterListener(accelerationListener)
         super.onPause()
     }
 
