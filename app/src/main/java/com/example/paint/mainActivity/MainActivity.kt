@@ -1,19 +1,27 @@
 package com.example.paint.mainActivity
 
+
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.text.TextUtils.replace
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.example.paint.*
 import com.example.paint.databinding.ActivityMainBinding
+import com.example.paint.fragments.DrawingBoard
 import com.example.paint.settingsActivity.SettingsActivity
+import com.google.android.gms.maps.MapFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,8 +50,31 @@ class MainActivity : AppCompatActivity() {
         viewModel.currentColor.observe(this) {
             binding.root.setBackgroundColor(it)
         }
-    }
 
+
+        binding.bottomNavigationView?.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.paintButton -> {
+                    this.supportFragmentManager.commit {
+                        replace<DrawingBoard>(R.id.fragment)
+                        setReorderingAllowed(true)
+                    }
+                    true
+                }
+
+                R.id.mapButton -> {
+                    this.supportFragmentManager.commit {
+                        replace<com.example.paint.fragments.MapFragment>(R.id.fragment)
+                        setReorderingAllowed(true)
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+    }
 
     override fun onResume() {
         super.onResume()
@@ -92,4 +123,11 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
+    private fun setCurrentFragment(fragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragment, fragment)
+            commit()
+        }
+
 }

@@ -4,23 +4,21 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.widget.Toast
 import com.example.paint.databinding.ActivitySettingsBinding
 import com.example.paint.mainActivity.MainActivityViewModel
-import com.example.paint.settingsActivity.SettingsActivity
 import java.lang.Math.abs
-import java.util.ArrayList
+import java.util.*
 
-class LightEventListener(val viewModel: MainActivityViewModel) :
+class LightEventListener(private val viewModel: MainActivityViewModel) :
     SensorEventListener {
 
-    private var threshhold = 255 / 2
+    private var threshold = 255 / 2
     private var prevBright: Int = 0
 
     override fun onSensorChanged(sensorEvent: SensorEvent) {
         val brightness = sensorEvent.values[0]
         val currDiff = abs(brightness.toInt() - prevBright)
-        if (currDiff > threshhold) {
+        if (currDiff > threshold) {
             viewModel.switchMode(false)
         } else {
             viewModel.switchMode(true)
@@ -31,7 +29,8 @@ class LightEventListener(val viewModel: MainActivityViewModel) :
     override fun onAccuracyChanged(sensor: Sensor, i: Int) {}
 }
 
-class AccelerometerEventListener(val viewModel: MainActivityViewModel) : SensorEventListener {
+class AccelerometerEventListener(private val viewModel: MainActivityViewModel) :
+    SensorEventListener {
 
     private var threshhold = 12
 
@@ -51,8 +50,8 @@ class AccelerometerEventListener(val viewModel: MainActivityViewModel) : SensorE
         acceleration = acceleration * 0.9f + delta
 
         if (acceleration > threshhold) {
-            viewModel.removedHistory.postValue(ArrayList())
-            viewModel.drawingHistory.postValue(ArrayList())
+            viewModel.removedHistory.postValue(LinkedList())
+            viewModel.drawingHistory.postValue(LinkedList())
         }
     }
 
@@ -60,7 +59,7 @@ class AccelerometerEventListener(val viewModel: MainActivityViewModel) : SensorE
 }
 
 
-class AlignEventListener(val binding: ActivitySettingsBinding) : SensorEventListener {
+class AlignEventListener(private val binding: ActivitySettingsBinding) : SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
 
@@ -74,18 +73,18 @@ class AlignEventListener(val binding: ActivitySettingsBinding) : SensorEventList
         val z = event.values[2]
 
         if (x in -0.9f..0.9f) {
-
-            binding.loggerMessage.text = "X Aligned"
+            binding.loggerMessage.text = "X Aligned "
             return
         }
         if (y in -0.9f..0.9f) {
-            binding.loggerMessage.text = "Y Aligned"
+            binding.loggerMessage.text = "Y Aligned "
             return
         }
         if (z in -0.9f..0.9f) {
-            binding.loggerMessage.text = "Z Aligned"
+            binding.loggerMessage.text = "Z Aligned "
             return
         }
+        binding.loggerMessage.text = ""
     }
 
     override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}

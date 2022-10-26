@@ -3,7 +3,6 @@ package com.example.paint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
-import android.graphics.Path
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -11,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.example.paint.mainActivity.MainActivityViewModel
+import java.util.*
 
 class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
     View.OnTouchListener {
@@ -49,8 +49,9 @@ class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
 
             MotionEvent.ACTION_DOWN -> {
                 viewModel.current.color = viewModel.brushColor.value!!
+                viewModel.current.size = viewModel.brushSize.value!!
                 viewModel.current.path.moveTo(event.x, event.y)
-                viewModel.removedHistory.postValue(ArrayList())
+                viewModel.removedHistory.postValue(LinkedList())
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -74,7 +75,7 @@ class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        brush.strokeWidth = 10F
+        brush.strokeWidth = viewModel.brushSize.value!!
         brush.style = Paint.Style.STROKE
         brush.color = viewModel.brushColor.value!!
         canvas.drawPath(viewModel.current.path, brush)
@@ -83,6 +84,7 @@ class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
 
             viewModel.drawingHistory.value!!.forEach { pathWrapper ->
                 brush.color = pathWrapper.color
+                brush.strokeWidth = pathWrapper.size
                 canvas.drawPath(pathWrapper.path, brush)
             }
         }

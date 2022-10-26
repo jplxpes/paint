@@ -8,4 +8,9 @@
     <string name="clearMsg">Clear</string>
     <string name="undo">Undo</string>
     <string name="redo">Redo</string>
+    <string name="permission_required_toast">Permission required</string>
+    <string name="location_permission_denied">Permission Denied</string>
+    <string name="paint">Paint</string>
+    <string name="mapper">Mapper</string>
+    <string name="chat">Chat</string>
 </resources>

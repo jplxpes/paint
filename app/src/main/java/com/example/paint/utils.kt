@@ -23,4 +23,4 @@ data class ColorDTO(
 ) : Parcelable
 
 
-data class PathWrapper(val path: Path, var color: Int)
+data class PathWrapper(val path: Path, var color: Int, var size: Float)

@@ -8,12 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import com.example.paint.PathWrapper
 import com.example.paint.blackColor
 import com.example.paint.defaultColor
+import java.util.LinkedList
 
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
     fun concludePath() {
         drawingHistory.value!!.add(current)
-        current = PathWrapper(Path(), brushColor.value!!)
+        current = PathWrapper(Path(), brushColor.value!!, brushSize.value!!)
     }
 
     fun switchMode(turnOnLightMode: Boolean) {
@@ -46,10 +47,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     var brushColor: MutableLiveData<Int> = MutableLiveData(blackColor)
 
-    var drawingHistory: MutableLiveData<ArrayList<PathWrapper>> = MutableLiveData(ArrayList())
+    var brushSize: MutableLiveData<Float> = MutableLiveData(10F)
 
-    var removedHistory: MutableLiveData<ArrayList<PathWrapper>> = MutableLiveData(ArrayList())
+    var drawingHistory: MutableLiveData<LinkedList<PathWrapper>> = MutableLiveData(LinkedList())
 
-    var current: PathWrapper = PathWrapper(Path(), brushColor.value!!)
+    var removedHistory: MutableLiveData<LinkedList<PathWrapper>> = MutableLiveData(LinkedList())
+
+    var current: PathWrapper = PathWrapper(Path(), brushColor.value!!, brushSize.value!!)
 
 }

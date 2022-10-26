@@ -13,10 +13,8 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.get
 import com.example.paint.ColorDTO
 import com.example.paint.R
-import com.example.paint.logger
 import com.example.paint.mainActivity.MainActivityViewModel
 
 class Palette : Fragment(R.layout.fragment_drawing_board) {
@@ -29,12 +27,13 @@ class Palette : Fragment(R.layout.fragment_drawing_board) {
         startSeeKBar(view.findViewById(R.id.b), "blue")
         startSeeKBar(view.findViewById(R.id.g), "green")
         startSeeKBar(view.findViewById(R.id.r), "red")
+        startSeeKBar(view.findViewById(R.id.size), "size")
 
         val undo = view.findViewById<Button>(R.id.undo)
         undo?.setOnClickListener {
             if (viewModel.drawingHistory.value!!.size > 0) {
                 val removed = viewModel.drawingHistory.value!!.removeLast()
-                viewModel.removedHistory.value!!.add(removed)
+                viewModel.removedHistory.value!!.addFirst(removed)
                 viewModel.removedHistory.postValue(viewModel.removedHistory.value)
                 viewModel.drawingHistory.postValue(viewModel.drawingHistory.value)
             }
@@ -68,13 +67,13 @@ class Palette : Fragment(R.layout.fragment_drawing_board) {
         return inflater.inflate(R.layout.fragment_palette, container, false)
     }
 
-    private fun startSeeKBar(seekBar: SeekBar, colorId: String) {
+    private fun startSeeKBar(seekBar: SeekBar, param: String) {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(
                 seek: SeekBar, progress: Int, fromUser: Boolean
             ) {
-                when (colorId) {
+                when (param) {
                     "red" -> {
                         val c = ColorDTO(
                             blue = viewModel.brushColor.value!! and 0xFF,
@@ -119,6 +118,10 @@ class Palette : Fragment(R.layout.fragment_drawing_board) {
                                 c.blue ?: 0,
                             )
                         )
+                        return
+                    }
+                    "size" -> {
+                        viewModel.brushSize.postValue(progress.toFloat())
                         return
                     }
                 }

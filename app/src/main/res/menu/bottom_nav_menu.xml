@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/paintButton"
+        android:icon="@drawable/ic_baseline_palette_24"
+        android:title="Paint" />
+    <item
+        android:id="@+id/mapButton"
+        android:iconTint="@color/white"
+        android:icon="@drawable/common_google_signin_btn_icon_dark"
+        android:title="Map" />
+    <item
+        android:id="@+id/chatButton"
+        android:iconTint="@color/white"
+        android:icon="@drawable/common_google_signin_btn_icon_dark"
+        android:title="Chat" />
+</menu>

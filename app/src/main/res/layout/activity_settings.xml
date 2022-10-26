@@ -93,7 +93,6 @@
         android:layout_marginBottom="30dp"
         android:backgroundTint="@color/primary"
         android:text="@string/clearMsg"
-        app:layout_constraintBottom_toTopOf="@+id/developerMsg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,31 +103,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="163dp"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="157dp"
         android:layout_marginBottom="14dp"
         android:text="Logger"
+        android:thumbTint="@color/primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/developerMsg"
+        app:layout_constraintTop_toBottomOf="@+id/clear"
         app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/developerMsg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="147dp"
-        android:layout_marginEnd="143dp"
-        android:layout_marginBottom="44dp"
-        android:text="@string/developerMsg"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.386"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clear" />
 
     <TextView
         android:id="@+id/loggerMessage"
