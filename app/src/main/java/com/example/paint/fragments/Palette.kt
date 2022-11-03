@@ -16,6 +16,9 @@ import androidx.fragment.app.activityViewModels
 import com.example.paint.ColorDTO
 import com.example.paint.R
 import com.example.paint.mainActivity.MainActivityViewModel
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 
 class Palette : Fragment(R.layout.fragment_drawing_board) {
 
@@ -31,9 +34,17 @@ class Palette : Fragment(R.layout.fragment_drawing_board) {
 
         val undo = view.findViewById<Button>(R.id.undo)
         undo?.setOnClickListener {
+
             if (viewModel.drawingHistory.value!!.size > 0) {
-                val removed = viewModel.drawingHistory.value!!.removeLast()
-                viewModel.removedHistory.value!!.addFirst(removed)
+                val dataRemoved = viewModel.drawingHistory.value!!.removeLast()
+                val dtoRemoved = viewModel.drawingDTO.value!!.removeLast()
+
+                viewModel.removedHistoryDTO.value!!.addFirst(dtoRemoved)
+                viewModel.removedHistory.value!!.addFirst(dataRemoved)
+
+                viewModel.drawingDTO.postValue(viewModel.drawingDTO.value)
+                viewModel.removedHistoryDTO.postValue(viewModel.removedHistoryDTO.value)
+
                 viewModel.removedHistory.postValue(viewModel.removedHistory.value)
                 viewModel.drawingHistory.postValue(viewModel.drawingHistory.value)
             }
@@ -51,7 +62,10 @@ class Palette : Fragment(R.layout.fragment_drawing_board) {
         redo?.setOnClickListener {
             if (viewModel.removedHistory.value!!.size > 0) {
                 val new = viewModel.removedHistory.value!!.removeFirst()
+                val newDTO = viewModel.removedHistoryDTO.value!!.removeFirst()
+                viewModel.drawingDTO.value!!.add(newDTO)
                 viewModel.drawingHistory.value!!.add(new)
+                viewModel.drawingDTO.postValue(viewModel.drawingDTO.value)
                 viewModel.drawingHistory.postValue(viewModel.drawingHistory.value)
             }
 

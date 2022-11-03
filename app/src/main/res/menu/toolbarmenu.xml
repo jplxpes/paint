@@ -9,4 +9,10 @@
         android:title="@string/action_setting"
         app:showAsAction="ifRoom" />
     />
+    <item
+        android:id="@+id/save_info"
+        android:icon="@drawable/ic_baseline_save_24"
+        android:title="@string/save_info"
+        app:showAsAction="ifRoom" />
+    />
 </menu>

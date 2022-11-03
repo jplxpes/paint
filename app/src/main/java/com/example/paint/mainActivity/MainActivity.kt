@@ -7,21 +7,23 @@ import android.hardware.Sensor
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.text.TextUtils.replace
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.paint.*
 import com.example.paint.databinding.ActivityMainBinding
 import com.example.paint.fragments.DrawingBoard
+import com.example.paint.fragments.HistoryFragment
 import com.example.paint.settingsActivity.SettingsActivity
-import com.google.android.gms.maps.MapFragment
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.time.Instant
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -69,7 +71,21 @@ class MainActivity : AppCompatActivity() {
                     }
                     true
                 }
-
+                R.id.onlineButton -> {
+                    this.supportFragmentManager.commit {
+                        replace<com.example.paint.fragments.OnlineFragment>(R.id.fragment)
+                        setReorderingAllowed(true)
+                    }
+                    true
+                }
+                R.id.history -> {
+                    viewModel.clear()
+                    this.supportFragmentManager.commit {
+                        replace<HistoryFragment>(R.id.fragment)
+                        setReorderingAllowed(true)
+                    }
+                    true
+                }
                 else -> false
             }
         }
@@ -120,14 +136,22 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 return true
             }
+            R.id.save_info -> {
+                val frag =
+                    this.supportFragmentManager.findFragmentById(R.id.fragment) is DrawingBoard
+                if (frag) {
+                    val curr: ArrayList<DataWrapper>? = viewModel.drawingDTO.value
+
+                    if (curr != null) {
+                        val obs = "${(System.currentTimeMillis() / 1000)}"
+                            Firebase.firestore.collection("History")
+                            .document(obs).set(DataWrapperDTO(obs, curr))
+
+                    }
+                }
+            }
         }
         return true
     }
-
-    private fun setCurrentFragment(fragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fragment, fragment)
-            commit()
-        }
 
 }

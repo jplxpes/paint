@@ -7,11 +7,17 @@
     <item
         android:id="@+id/mapButton"
         android:iconTint="@color/white"
-        android:icon="@drawable/common_google_signin_btn_icon_dark"
+        android:icon="@drawable/ic_baseline_map_24"
         android:title="Map" />
     <item
-        android:id="@+id/chatButton"
+        android:id="@+id/onlineButton"
         android:iconTint="@color/white"
-        android:icon="@drawable/common_google_signin_btn_icon_dark"
-        android:title="Chat" />
+        android:icon="@drawable/ic_baseline_cloud_24"
+        android:title="Online" />
+
+    <item
+        android:id="@+id/history"
+        android:iconTint="@color/white"
+        android:icon="@drawable/ic_baseline_history_24"
+        android:title="History" />
 </menu>

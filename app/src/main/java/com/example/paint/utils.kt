@@ -5,6 +5,7 @@ import android.graphics.Path
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import java.util.logging.Logger
+import kotlin.collections.ArrayList
 
 const val EMPTY_STRING = ""
 const val DELAY_TIMER_ACTIVITY: Long = 2000
@@ -24,3 +25,11 @@ data class ColorDTO(
 
 
 data class PathWrapper(val path: Path, var color: Int, var size: Float)
+
+@Parcelize
+data class DataWrapper(val path: ArrayList<Pair<Float, Float>>, var color: Int, var size: Double, var key: String = "") :
+    Parcelable
+
+data class ReceivedData(val id: String, val data: List<DataWrapper>)
+data class DataWrapperDTO(val id: String, val data: List<Any>)
+

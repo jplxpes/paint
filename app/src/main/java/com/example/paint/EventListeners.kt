@@ -12,13 +12,13 @@ import java.util.*
 class LightEventListener(private val viewModel: MainActivityViewModel) :
     SensorEventListener {
 
-    private var threshold = 255 / 2
+    private var threshold = 20000.0
     private var prevBright: Int = 0
 
     override fun onSensorChanged(sensorEvent: SensorEvent) {
         val brightness = sensorEvent.values[0]
-        val currDiff = abs(brightness.toInt() - prevBright)
-        if (currDiff > threshold) {
+        val currDiff = kotlin.math.abs(brightness.toInt() - prevBright)
+        if (brightness < threshold) {
             viewModel.switchMode(false)
         } else {
             viewModel.switchMode(true)
@@ -32,7 +32,7 @@ class LightEventListener(private val viewModel: MainActivityViewModel) :
 class AccelerometerEventListener(private val viewModel: MainActivityViewModel) :
     SensorEventListener {
 
-    private var threshhold = 12
+    private var threshhold = 4
 
     private var acceleration = 10f
     private var currentAcceleration = SensorManager.GRAVITY_EARTH

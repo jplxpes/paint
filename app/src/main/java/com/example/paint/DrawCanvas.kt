@@ -51,7 +51,9 @@ class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
                 viewModel.current.color = viewModel.brushColor.value!!
                 viewModel.current.size = viewModel.brushSize.value!!
                 viewModel.current.path.moveTo(event.x, event.y)
+                viewModel.currentLineDTO.add(Pair(event.x, event.y))
                 viewModel.removedHistory.postValue(LinkedList())
+                viewModel.removedHistoryDTO.postValue(LinkedList())
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -59,6 +61,7 @@ class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
                     event.x,
                     event.y
                 )
+                viewModel.currentLineDTO.add(Pair(event.x, event.y))
             }
 
             MotionEvent.ACTION_UP -> {
@@ -88,6 +91,9 @@ class DrawCanvas(context: Context, attrs: AttributeSet?) : View(context, attrs),
                 canvas.drawPath(pathWrapper.path, brush)
             }
         }
+
+
+
     }
 
 }

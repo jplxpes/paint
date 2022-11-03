@@ -1,24 +1,21 @@
-package com.example.paint.mainActivity
+package com.example.paint.onlineActivity
 
 import android.app.Application
 import android.graphics.Color
 import android.graphics.Path
-import android.provider.Settings
-import android.provider.Settings.Secure
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.example.paint.*
-import com.example.paint.onlineActivity.ID
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.paint.DataWrapper
+import com.example.paint.PathWrapper
+import com.example.paint.blackColor
+import com.example.paint.defaultColor
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
+class OnlineActivityViewModel(application: Application) : AndroidViewModel(application) {
 
-class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
-
-    var online = false
-
-    fun concludePath(forceDisable: Boolean = true) {
+    fun concludePath() {
         drawingHistory.value!!.add(current)
         drawingDTO.value!!.add(
             DataWrapper(
@@ -30,9 +27,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         current = PathWrapper(Path(), brushColor.value!!, brushSize.value!!)
         drawingHistory.postValue(drawingHistory.value!!)
         drawingDTO.postValue(drawingDTO.value!!)
-        if (online && forceDisable) {
-            updateDrawState()
-        }
     }
 
     fun switchMode(turnOnLightMode: Boolean) {
@@ -59,7 +53,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     }
 
-    fun loadData(data: List<DataWrapper>, forceDisable: Boolean = true) {
+    fun loadData(data: List<DataWrapper>) {
         var started = false
         data.forEach {
             current.color = it.color
@@ -91,8 +85,8 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
                     )
                 }
             }
-            concludePath(forceDisable)
         }
+        concludePath()
     }
 
     fun clear() {
@@ -105,25 +99,6 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         brushColor.postValue(Color.BLACK)
         brushSize.postValue(10F)
         current = PathWrapper(Path(), brushColor.value!!, brushSize.value!!)
-    }
-
-    fun enableOnline() {
-        online = true
-    }
-
-
-    private fun updateDrawState() {
-        val curr: ArrayList<DataWrapper>? = drawingDTO.value
-
-        if (curr != null) {
-            Firebase.firestore.collection("Online")
-                .document("Ref").set(
-                    DataWrapperDTO(
-                        ID, curr
-                    )
-                )
-        }
-
     }
 
     var currentLineDTO: ArrayList<Pair<Float, Float>> = ArrayList()
